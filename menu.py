@@ -11,7 +11,7 @@ window = pygame.display.set_mode((width, height))
 bg_img = pygame.image.load('./assets/background_menu.png')
 bg_img = pygame.transform.scale(bg_img,(width,height))
 
-# Setting window Title 
+# Setting window Title
 pygame.display.set_caption('Megaman II')
 
 # Setting window icon
@@ -33,14 +33,18 @@ transparent = (0, 0, 0, 0)
 cursor_move_sound = pygame.mixer.Sound("./assets/sounds/cursor_move.wav")
 
 running = True
+# Render game objects
 window.blit(bg_img,(0,0))
 window.blit(normal_btn, (400, 475))
 window.blit(arrow_btn, (375, 470))
 window.blit(difficult_btn, (400, 500))
+# Game loop
 while running:
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
+        # Switch beetwen menu options, when selected redraws
+        # all scenario
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_DOWN:
                 window.fill(0)
@@ -56,6 +60,6 @@ while running:
                 window.blit(arrow_btn, (375, 470))
                 window.blit(difficult_btn, (400, 500))
                 pygame.mixer.Sound.play(cursor_move_sound)
-    
+
     pygame.display.update()
 pygame.quit()

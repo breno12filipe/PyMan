@@ -1,29 +1,29 @@
-# import pygame, sys, math
-# from pygame.locals import *
-# import pyganim
+import pygame, sys, math
+from pygame.locals import *
+# pyganim is still on testing, we're not sure if we are going
+# to use it for the first version of the game
+import pyganim
 
-# pygame.init()
-# windowSurface = pygame.display.set_mode((320, 240), 0, 32)
-# pygame.display.set_caption('Pyganim Basic Demo')
+pygame.init()
+windowSurface = pygame.display.set_mode((320, 240), 0, 32)
+pygame.display.set_caption('Pyganim Basic Demo')
 
-# boltAnim = pyganim.PygAnimation([('assets\sprites\megaman\megaman_stand1.png', 900),
-#                                  ('assets\sprites\megaman\megaman_stand2.png', 900)])
-# boltAnim.play()
+boltAnim = pyganim.PygAnimation([('assets\sprites\megaman\megaman_stand1.png', 900),
+                                 ('assets\sprites\megaman\megaman_stand2.png', 900)])
+boltAnim.play()
 
+while True:
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
 
-
-# while True:
-#     for event in pygame.event.get():
-#         if event.type == QUIT:
-#             pygame.quit()
-#             sys.exit()
-
-#     windowSurface.fill((100, 50, 50))
-#     boltAnim.blit(windowSurface, (100, 50))
-#     pygame.display.update()
+    windowSurface.fill((255, 255, 255))
+    boltAnim.blit(windowSurface, (100, 50))
+    pygame.display.update()
 
 
-
+"""
 import pygame, random
 from pygame.locals import *
 pygame.init()
@@ -38,9 +38,6 @@ size = (WIDTH, HEIGHT)
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Creating Sprite")
 
-
-
-
 # Object class
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, color, height, width):
@@ -54,8 +51,6 @@ class Sprite(pygame.sprite.Sprite):
         #                 color,
         #                 pygame.Rect(0, 0, width, height))
 
-        
-
         self.rect = self.image.get_rect()
 
     def moveRight(self, pixels):
@@ -66,9 +61,6 @@ class Sprite(pygame.sprite.Sprite):
 
     def moveBack(self, speed):
         self.rect.y -= speed * speed/10
-
-
-
 
 all_sprites_list = pygame.sprite.Group()
 
@@ -81,13 +73,6 @@ all_sprites_list.add(playerCar)
 
 exit = True
 clock = pygame.time.Clock()
-
-
-
-
-
-
-
 
 while exit:
     for event in pygame.event.get():
@@ -109,3 +94,4 @@ while exit:
     clock.tick(60)
 
 pygame.quit()
+"""
