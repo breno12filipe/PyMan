@@ -21,7 +21,9 @@ while True:
     windowSurface.fill((255, 255, 255))
     boltAnim.blit(windowSurface, (100, 50))
     pygame.display.update()
+    #------------------------------------------------------------------------
 
+    #------------------------------------------------------------------------
 
 """
 import pygame, random

@@ -1,5 +1,4 @@
 import pygame
-from weapon import Weapon
 
 pygame.init()
 
@@ -11,35 +10,63 @@ clock = pygame.time.Clock()
 done = False
 colours = {"white":(255, 255, 255), "green":(0, 255, 0), "blue":(0, 0, 255), "red":(255, 0, 0), "cyan":(0, 255, 255), "black":(0, 0, 0)}
 groundx = 0
-chardirec = "right"
+chardirec = "stand"
 y_vel = 0.0
 char_y = 490
+spiderx = 1000
+spidery = 500
+
+sprite_value = 0
+#sprites
+stand_sprite = [pygame.image.load("assets\sprites\megaman\megaman_stand1.png"),
+                pygame.image.load("assets\sprites\megaman\megaman_stand2.png")]
+
+walking_left_sprite=[pygame.image.load("assets\sprites\megaman\megaman_walking1-left.png"),
+																					pygame.image.load("assets\sprites\megaman\megaman_walking2-left.png"),
+																					pygame.image.load("assets\sprites\megaman\megaman_walking3-left.png")]
 
 char = pygame.image.load("./assets/sprites/megaman/megaman_stand1.png").convert_alpha()
 charl = pygame.transform.flip(char, True, False)
 
-spiderx = 1000
-spidery = 500
+
+
 
 while not done:
+	
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			done = True
-	
+	if event.type  == pygame.KEYUP:
+		if event.key == pygame.K_a or event.key == pygame.K_d:
+			moving = False
+			sprite_value = 0
+ 
 	keys = pygame.key.get_pressed()
 	
 	if keys[pygame.K_a] == True:
+		moving = True
 		groundxvel = 5
 		chardirec = "left"
+		print("left")
+		print(sprite_value)
 	elif keys[pygame.K_d] == True:
+		moving = True
 		groundxvel = -5
 		chardirec = "right"
+		print("right")
+		print(sprite_value)
 	else:
+		chardirec = "stand"
 		groundxvel = 0
+		moving = False
+		print("stand")
+		print(sprite_value)
 	
 	groundx += groundxvel
 	spiderx += groundxvel
 	
+	
+ 
 	if keys[pygame.K_SPACE] == True and (groundcollide.colliderect(ground) or groundcollide.colliderect(ground2)):
 		y_vel = 17.0
 	
@@ -71,15 +98,30 @@ while not done:
 	#pygame.draw.rect(screen, colours["red"], groundcollide, 0)
 	pygame.draw.rect(screen, colours["black"], spider, 0)
 	#pygame.draw.rect(screen, colours["black"], charbox, 0)
+	if moving == True:
+		sprite_value =+1
+	if moving ==True:
+		if sprite_value >= len(walking_left_sprite):
+			sprite_value = 0
+		image = walking_left_sprite[sprite_value]
+	elif moving == False:
+		if sprite_value>= len(stand_sprite):
+			sprite_value = 0
+	image = stand_sprite[sprite_value]
 	
+
 	if chardirec == "right":
 		screen.blit(char, (620, char_y))
+	elif chardirec == "left":
+		screen.blit(image, (620, char_y))
 	else:
-		screen.blit(charl, (620, char_y))
-	
-	pygame.display.flip()
+		screen.blit(image,(620, char_y))
 	
 	clock.tick(60)
+	pygame.display.update()
+	sprite_value +=1
+	print("teste")
+	
 
 print (char.get_rect())
 
