@@ -1,128 +1,66 @@
 import pygame
+from pygame.locals import *
+from gameObjects.player import Player
+from gameObjects.ground import Ground
+from gameObjects.background import Background
+import sys
 
-pygame.init()
+pygame.init()  # Begin pygame
 
-size = (1280, 700)
-screen = pygame.display.set_mode(size)
-pygame.display.set_caption("scroller")
-clock = pygame.time.Clock()
+# Declaring variables to be used through the program
+HEIGHT = 350
+WIDTH = 700
+FPS = 60
+FPS_CLOCK = pygame.time.Clock()
+COUNT = 0
 
-done = False
-colours = {"white":(255, 255, 255), "green":(0, 255, 0), "blue":(0, 0, 255), "red":(255, 0, 0), "cyan":(0, 255, 255), "black":(0, 0, 0)}
-groundx = 0
-chardirec = "stand"
-y_vel = 0.0
-char_y = 490
-spiderx = 1000
-spidery = 500
+# Create the display, meant to be global variable
+displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Game")
 
-sprite_value = 0
-#sprites
-stand_sprite = [pygame.image.load("assets\sprites\megaman\megaman_stand1.png"),
-                pygame.image.load("assets\sprites\megaman\megaman_stand2.png")]
+background = Background("assets/backgrounds/Background.png", displaysurface)
 
-walking_left_sprite=[pygame.image.load("assets\sprites\megaman\megaman_walking1-left.png"),
-																					pygame.image.load("assets\sprites\megaman\megaman_walking2-left.png"),
-																					pygame.image.load("assets\sprites\megaman\megaman_walking3-left.png")]
+ground = Ground("assets/backgrounds/Ground.png", displaysurface)
+ground_group = pygame.sprite.Group()
+ground_group.add(ground)
 
-char = pygame.image.load("./assets/sprites/megaman/megaman_stand1.png").convert_alpha()
-charl = pygame.transform.flip(char, True, False)
-
+player = Player(WIDTH, ground_group)
+Playergroup = pygame.sprite.Group()
 
 
+# Game loop
+while True:
+    player.gravity_check()
 
-while not done:
-	
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			done = True
-	if event.type  == pygame.KEYUP:
-		if event.key == pygame.K_a or event.key == pygame.K_d:
-			moving = False
-			sprite_value = 0
- 
-	keys = pygame.key.get_pressed()
-	
-	if keys[pygame.K_a] == True:
-		moving = True
-		groundxvel = 5
-		chardirec = "left"
-		print("left")
-		print(sprite_value)
-	elif keys[pygame.K_d] == True:
-		moving = True
-		groundxvel = -5
-		chardirec = "right"
-		print("right")
-		print(sprite_value)
-	else:
-		chardirec = "stand"
-		groundxvel = 0
-		moving = False
-		print("stand")
-		print(sprite_value)
-	
-	groundx += groundxvel
-	spiderx += groundxvel
-	
-	
- 
-	if keys[pygame.K_SPACE] == True and (groundcollide.colliderect(ground) or groundcollide.colliderect(ground2)):
-		y_vel = 17.0
-	
-	char_y -= y_vel
-	
-	charbox = pygame.Rect(624, char_y + 4, 59, 69)
-	ground = pygame.Rect(0 + groundx, 640, 1280, 60)
-	ground2 = pygame.Rect(1280 + groundx, 560, 1280, 60)
-	groundcollide = pygame.Rect(622, (char_y + 77 - y_vel), 63, 1)
-	spider = pygame.Rect(0 + spiderx, 620, 50, 20)
-	
-	if groundcollide.colliderect(ground):
-		y_vel = 0.0
-		char_y = ground.y - 77
-	elif groundcollide.colliderect(ground2):
-		y_vel = 0.0
-		char_y = ground2.y - 77
-	elif y_vel > -20:
-		y_vel -= 1
-	
-	if charbox.colliderect(spider):
-		print("hit") 
+    for event in pygame.event.get():
+        # Will run when the close window button is clicked
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
 
-	
-	screen.fill(colours["cyan"])
-	
-	pygame.draw.rect(screen, colours["green"], ground, 0)
-	pygame.draw.rect(screen, colours["green"], ground2, 0)
-	#pygame.draw.rect(screen, colours["red"], groundcollide, 0)
-	pygame.draw.rect(screen, colours["black"], spider, 0)
-	#pygame.draw.rect(screen, colours["black"], charbox, 0)
-	if moving == True:
-		sprite_value =+1
-	if moving ==True:
-		if sprite_value >= len(walking_left_sprite):
-			sprite_value = 0
-		image = walking_left_sprite[sprite_value]
-	elif moving == False:
-		if sprite_value>= len(stand_sprite):
-			sprite_value = 0
-	image = stand_sprite[sprite_value]
-	
+        # For events that occur upon clicking the mouse (left click)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pass
 
-	if chardirec == "right":
-		screen.blit(char, (620, char_y))
-	elif chardirec == "left":
-		screen.blit(image, (620, char_y))
-	else:
-		screen.blit(image,(620, char_y))
-	
-	clock.tick(60)
-	pygame.display.update()
-	sprite_value +=1
-	print("teste")
-	
+        # Event handling for a range of different key presses
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                player.jump()
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT or pygame.K_RIGHT:
+                player.image = pygame.image.load(
+                    'assets/sprites/megaman/megaman_stand1.png')
+                print("cheguei")
+    # Player related functions
+    player.update()
+    player.move()
 
-print (char.get_rect())
+    # Display and Background related functions
+    background.render()
+    ground.render()
 
-pygame.quit()
+    # Rendering Player
+    displaysurface.blit(player.image, player.rect)
+
+    pygame.display.update()
+    FPS_CLOCK.tick(FPS)
