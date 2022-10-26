@@ -23,7 +23,7 @@ class Player(pygame.sprite.Sprite):
         self.running = False
         self.move_frame = 0
 
-        self.fric = 0.10
+        self.fric = -0.10
 
         # Run animation for the RIGHT
         self.run_ani_R = [pygame.image.load("./assets/sprites/megaman/megaman_walking1-right.png"),
