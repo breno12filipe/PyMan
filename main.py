@@ -1,86 +1,66 @@
 import pygame
-from weapon import Weapon
+from pygame.locals import *
+from gameObjects.player import Player
+from gameObjects.ground import Ground
+from gameObjects.background import Background
+import sys
 
-pygame.init()
+pygame.init()  # Begin pygame
 
-size = (1280, 700)
-screen = pygame.display.set_mode(size)
-pygame.display.set_caption("scroller")
-clock = pygame.time.Clock()
+# Declaring variables to be used through the program
+HEIGHT = 350
+WIDTH = 700
+FPS = 60
+FPS_CLOCK = pygame.time.Clock()
+COUNT = 0
 
-done = False
-colours = {"white":(255, 255, 255), "green":(0, 255, 0), "blue":(0, 0, 255), "red":(255, 0, 0), "cyan":(0, 255, 255), "black":(0, 0, 0)}
-groundx = 0
-chardirec = "right"
-y_vel = 0.0
-char_y = 490
+# Create the display, meant to be global variable
+displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Game")
 
-char = pygame.image.load("megaman_stand_export.png").convert_alpha()
-charl = pygame.transform.flip(char, True, False)
+background = Background("assets/backgrounds/Background.png", displaysurface)
 
-spiderx = 1000
-spidery = 500
+ground = Ground("assets/backgrounds/Ground.png", displaysurface)
+ground_group = pygame.sprite.Group()
+ground_group.add(ground)
 
-while not done:
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			done = True
-	
-	keys = pygame.key.get_pressed()
-	
-	if keys[pygame.K_a] == True:
-		groundxvel = 5
-		chardirec = "left"
-	elif keys[pygame.K_d] == True:
-		groundxvel = -5
-		chardirec = "right"
-	else:
-		groundxvel = 0
-	
-	groundx += groundxvel
-	spiderx += groundxvel
-	
-	if keys[pygame.K_SPACE] == True and (groundcollide.colliderect(ground) or groundcollide.colliderect(ground2)):
-		y_vel = 17.0
-	
-	char_y -= y_vel
-	
-	charbox = pygame.Rect(624, char_y + 4, 59, 69)
-	ground = pygame.Rect(0 + groundx, 640, 1280, 60)
-	ground2 = pygame.Rect(1280 + groundx, 560, 1280, 60)
-	groundcollide = pygame.Rect(622, (char_y + 77 - y_vel), 63, 1)
-	spider = pygame.Rect(0 + spiderx, 620, 50, 20)
-	
-	if groundcollide.colliderect(ground):
-		y_vel = 0.0
-		char_y = ground.y - 77
-	elif groundcollide.colliderect(ground2):
-		y_vel = 0.0
-		char_y = ground2.y - 77
-	elif y_vel > -20:
-		y_vel -= 1
-	
-	if charbox.colliderect(spider):
-		print("hit") 
+player = Player(WIDTH, ground_group)
+Playergroup = pygame.sprite.Group()
 
-	
-	screen.fill(colours["cyan"])
-	
-	pygame.draw.rect(screen, colours["green"], ground, 0)
-	pygame.draw.rect(screen, colours["green"], ground2, 0)
-	#pygame.draw.rect(screen, colours["red"], groundcollide, 0)
-	pygame.draw.rect(screen, colours["black"], spider, 0)
-	#pygame.draw.rect(screen, colours["black"], charbox, 0)
-	
-	if chardirec == "right":
-		screen.blit(char, (620, char_y))
-	else:
-		screen.blit(charl, (620, char_y))
-	
-	pygame.display.flip()
-	
-	clock.tick(60)
 
-print (char.get_rect())
+# Game loop
+while True:
+    player.gravity_check()
 
-pygame.quit()
+    for event in pygame.event.get():
+        # Will run when the close window button is clicked
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+
+        # For events that occur upon clicking the mouse (left click)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pass
+
+        # Event handling for a range of different key presses
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                player.jump()
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT or pygame.K_RIGHT:
+                player.image = pygame.image.load(
+                    'assets/sprites/megaman/megaman_stand1.png')
+                print("cheguei")
+    # Player related functions
+    player.update()
+    player.move()
+
+    # Display and Background related functions
+    background.render()
+    ground.render()
+
+    # Rendering Player
+    displaysurface.blit(player.image, player.rect)
+
+    pygame.display.update()
+    FPS_CLOCK.tick(FPS)
