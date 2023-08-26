@@ -49,8 +49,8 @@ while True:
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or pygame.K_RIGHT:
                 player.image = pygame.image.load(
-                    'assets/sprites/megaman/megaman_stand1.png')
-                print("cheguei")
+                    "assets/sprites/megaman/megaman_stand1.png"
+                )
     # Player related functions
     player.update()
     player.move()

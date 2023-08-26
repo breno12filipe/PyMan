@@ -1,15 +1,14 @@
-import pygame
+import pygame, time, logging
 from pygame.locals import *
 
 vec = pygame.math.Vector2
-ACC = 0.3
+ACC = 0.8
 
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, width, ground_group):
         super().__init__()
-        self.image = pygame.image.load(
-            './assets/sprites/megaman/megaman_stand1.png')
+        self.image = pygame.image.load("./assets/sprites/megaman/megaman_stand1.png")
         self.rect = self.image.get_rect()
 
         # Position and direction
@@ -23,19 +22,21 @@ class Player(pygame.sprite.Sprite):
         self.running = False
         self.move_frame = 0
 
-        self.fric = -0.10
+        self.fric = -0.14
 
         # Run animation for the RIGHT
-        self.run_ani_R = [pygame.image.load("./assets/sprites/megaman/megaman_walking1-right.png"),
-                          pygame.image.load(
-                              "./assets/sprites/megaman/megaman_walking2-right.png"),
-                          pygame.image.load("./assets/sprites/megaman/megaman_walking3-right.png")]
+        self.run_ani_R = [
+            pygame.image.load("./assets/sprites/megaman/megaman_walking1-right.png"),
+            pygame.image.load("./assets/sprites/megaman/megaman_walking2-right.png"),
+            pygame.image.load("./assets/sprites/megaman/megaman_walking3-right.png"),
+        ]
 
         # Run animation for the LEFT
-        self.run_ani_L = [pygame.image.load("./assets/sprites/megaman/megaman_walking1-left.png"),
-                          pygame.image.load(
-                              "./assets/sprites/megaman/megaman_walking2-left.png"),
-                          pygame.image.load("./assets/sprites/megaman/megaman_walking3-left.png")]
+        self.run_ani_L = [
+            pygame.image.load("./assets/sprites/megaman/megaman_walking1-left.png"),
+            pygame.image.load("./assets/sprites/megaman/megaman_walking2-left.png"),
+            pygame.image.load("./assets/sprites/megaman/megaman_walking3-left.png"),
+        ]
 
         self.width = width
         self.ground_group = ground_group
@@ -45,8 +46,9 @@ class Player(pygame.sprite.Sprite):
         self.acc = vec(0, 0.5)
 
         # Will set running to False if the player has slowed down to a certain extent
-        if abs(self.vel.x) > 0.3:
+        if abs(self.vel.x) > 0.2:
             self.running = True
+            logging.info("INFO:Player: Running")
         else:
             self.running = False
 
@@ -62,7 +64,7 @@ class Player(pygame.sprite.Sprite):
         # Formulas to calculate velocity while accounting for friction
         self.acc.x += self.vel.x * self.fric
         self.vel += self.acc
-        self.pos += self.vel + 0.5 * self.acc  # Updates Position with new values
+        self.pos += self.vel + 0.0 * self.acc  # Updates Position with new values
 
         # This causes character warping from one point of the screen to the other
         if self.pos.x > self.width:
@@ -89,24 +91,28 @@ class Player(pygame.sprite.Sprite):
             return
 
         # Move the character to the next frame if conditions are met
-        if self.jumping == False and self.running == True:
+        if self.running and not self.jumping:
             if self.vel.x > 0:
                 self.image = self.run_ani_R[self.move_frame]
+                time.sleep(0.05)
                 self.direction = "RIGHT"
             else:
                 self.image = self.run_ani_L[self.move_frame]
+                time.sleep(0.05)
                 self.direction = "LEFT"
             self.move_frame += 1
 
         # Returns to base frame if standing still and incorrect frame is showing
-        if abs(self.vel.x) < 0.2 and self.move_frame != 0:
+        if abs(self.vel.x) < 0.9 and self.move_frame != 0:
             self.move_frame = 0
             if self.direction == "RIGHT":
                 self.image = pygame.image.load(
-                    './assets/sprites/megaman/megaman_stand1.png')
+                    "./assets/sprites/megaman/megaman_stand1.png"
+                )
             elif self.direction == "LEFT":
                 self.image = pygame.image.load(
-                    './assets/sprites/megaman/megaman_stand1.png')
+                    "./assets/sprites/megaman/megaman_stand1.png"
+                )
 
     def attack(self):
         pass
