@@ -1,9 +1,9 @@
-import pygame
+import pygame, sys, importlib
 from pygame.locals import *
+
 from gameObjects.player import Player
 from gameObjects.ground import Ground
 from gameObjects.background import Background
-import sys
 
 pygame.init()  # Begin pygame
 
