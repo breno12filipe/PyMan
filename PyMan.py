@@ -1,6 +1,6 @@
 import pygame
 from scenes.menu import Menu, gameDifficultyLevels
-from scenes.stageSelector import scenes
+from scenes.stageSelector import StageSelector
 
 pygame.init()
 

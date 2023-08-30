@@ -1,147 +1,140 @@
-import pygame
 import sys
 
-# Inicialização do Pygame
-pygame.init()
 
-# Configurações da tela
-screen_width = 800
-screen_height = 600
-screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("Sprite Sheet Example")
+class StageSelector:
+    def __init__(self, pygame):
+        self.pygame = pygame
 
-windowInfoObject = pygame.display.Info()
-windowSize = (windowInfoObject.current_w, windowInfoObject.current_h)
-window = pygame.display.set_mode(windowSize)
+        # Configurações da tela
+        self.screen_width = 800
+        self.screen_height = 600
+        self.screen = self.pygame.display.set_mode(
+            (self.screen_width, self.screen_height)
+        )
+        self.pygame.display.set_caption("Stage Selector")
 
-# Carregando a imagem de sprite sheet
-stageSelectMenu = pygame.image.load("./assets/sprites/stageSelect/StageSelectMenu.png")
+        # Carregando a imagem do menu de seleção de estágio
+        self.stageSelectMenu = pygame.image.load(
+            "./assets/sprites/stageSelect/StageSelectMenu.png"
+        )
 
-# Redimensionar a imagem de menu de seleção de estágio
-stageSelectMenu = pygame.transform.scale(stageSelectMenu, windowSize)
+        # Redimensiona a imagem de menu de seleção de estágio
+        self.stageSelectMenu = self.pygame.transform.scale(
+            self.stageSelectMenu, (self.screen_width, self.screen_height)
+        )
 
-scenes = {
-    "bubbleMan": pygame.Rect(120, 60, 150, 110),
-    "airMan": pygame.Rect(325, 60, 150, 110),
-    "quickMan": pygame.Rect(525, 60, 150, 110),
-    "heatMan": pygame.Rect(120, 210, 150, 110),
-    "drWilly": pygame.Rect(325, 210, 150, 110),
-    "woodMan": pygame.Rect(525, 210, 150, 110),
-    "metalMan": pygame.Rect(120, 360, 150, 110),
-    "flashMan": pygame.Rect(325, 360, 150, 110),
-    "crashMan": pygame.Rect(530, 360, 150, 110),
-}
+        # Dicionário de cenas e coordenadas para desenho da borda de cada cena
+        self.scenes = {
+            "bubbleMan": self.pygame.Rect(120, 60, 150, 110),
+            "airMan": self.pygame.Rect(325, 60, 150, 110),
+            "quickMan": self.pygame.Rect(525, 60, 150, 110),
+            "heatMan": self.pygame.Rect(120, 210, 150, 110),
+            "drWilly": self.pygame.Rect(325, 210, 150, 110),
+            "woodMan": self.pygame.Rect(525, 210, 150, 110),
+            "metalMan": self.pygame.Rect(120, 360, 150, 110),
+            "flashMan": self.pygame.Rect(325, 360, 150, 110),
+            "crashMan": self.pygame.Rect(530, 360, 150, 110),
+        }
 
+        # Lógicas relacionadas à seleção de cena...
 
-# Lógicas relacionadas à seleção de cena...
-# Cena atual
-currentSelectedScene = scenes["drWilly"]
-selectedSceneRow = 1
-selectedSceneCol = 1
+        # Cena atual
+        self.currentSelectedScene = self.scenes["drWilly"]
+        self.selectedSceneRow = 1
+        self.selectedSceneCol = 1
 
-# fmt: off
-scenesMatrix = [[scenes["bubbleMan"], scenes["airMan"], scenes["quickMan"],],
-                [scenes["heatMan"], scenes["drWilly"], scenes["woodMan"],],
-                [scenes["metalMan"], scenes["flashMan"], scenes["crashMan"],]]
+        # Matriz de cenas mapeando e descrevendo corretamente o menu de seleção de cena
+        # fmt: off
+        self.scenesMatrix = [[self.scenes["bubbleMan"], self.scenes["airMan"], self.scenes["quickMan"],],
+                            [self.scenes["heatMan"], self.scenes["drWilly"], self.scenes["woodMan"],],
+                            [self.scenes["metalMan"], self.scenes["flashMan"], self.scenes["crashMan"],]]
 
-# Funções relacionadas ao calculo da matriz de cenas...
-def findUpperNeighbor():
-    global currentSelectedScene
-    global selectedSceneRow
-    global selectedSceneCol
+        # Variáveis de controle do piscar da borda de seleção de cena
+        self.visible = True
+        # Intervalo de piscar em milissegundos
+        self.blink_interval = 500
+        self.last_blink_time = self.pygame.time.get_ticks()
 
-    if selectedSceneRow - 1 >= 0:
-        currentSelectedScene = scenesMatrix[selectedSceneRow - 1][selectedSceneCol]
-        selectedSceneRow = selectedSceneRow - 1
-        selectedSceneCol = selectedSceneCol
-    else:
-        currentSelectedScene = None
-        selectedSceneRow = None
-        selectedSceneCol = None
+        # Desenha o Menu de seleção de estágio
+        self.screen.blit(self.stageSelectMenu, (0, 0))
 
-def findBelowNeighbor():
-    global currentSelectedScene
-    global selectedSceneRow
-    global selectedSceneCol
+    # Metodos relacionadas ao calculo da matriz de cenas...
+    def findUpperNeighbor(self):
+        if self.selectedSceneRow - 1 >= 0:
+            self.currentSelectedScene = self.scenesMatrix[self.selectedSceneRow - 1][
+                self.selectedSceneCol
+            ]
+            self.selectedSceneRow = self.selectedSceneRow - 1
+            self.selectedSceneCol = self.selectedSceneCol
+        else:
+            self.currentSelectedScene = None
+            self.selectedSceneRow = None
+            self.selectedSceneCol = None
 
-    if selectedSceneRow + 1 < len(scenesMatrix):
-        currentSelectedScene = scenesMatrix[selectedSceneRow + 1][selectedSceneCol]
-        selectedSceneRow = selectedSceneRow + 1
-        selectedSceneCol = selectedSceneCol
-    else:
-        currentSelectedScene = None
-        selectedSceneRow = None
-        selectedSceneCol = None
+    def findBelowNeighbor(self):
+        if self.selectedSceneRow + 1 < len(self.scenesMatrix):
+            self.currentSelectedScene = self.scenesMatrix[self.selectedSceneRow + 1][
+                self.selectedSceneCol
+            ]
+            self.selectedSceneRow = self.selectedSceneRow + 1
+            self.selectedSceneCol = self.selectedSceneCol
+        else:
+            self.currentSelectedScene = None
+            self.selectedSceneRow = None
+            self.selectedSceneCol = None
 
-def findRightNeighbor():
-    global currentSelectedScene
-    global selectedSceneRow
-    global selectedSceneCol
+    def findRightNeighbor(self):
+        if self.selectedSceneCol + 1 < len(self.scenesMatrix[self.selectedSceneRow]):
+            self.currentSelectedScene = self.scenesMatrix[self.selectedSceneRow][
+                self.selectedSceneCol + 1
+            ]
+            self.selectedSceneRow = self.selectedSceneRow
+            self.selectedSceneCol = self.selectedSceneCol + 1
+        else:
+            self.currentSelectedScene = None
+            self.selectedSceneRow = None
+            self.selectedSceneCol = None
 
-    if selectedSceneCol + 1 < len(scenesMatrix[selectedSceneRow]):
-        currentSelectedScene = scenesMatrix[selectedSceneRow][selectedSceneCol + 1]
-        selectedSceneRow = selectedSceneRow
-        selectedSceneCol = selectedSceneCol + 1
-    else:
-        currentSelectedScene = None
-        selectedSceneRow = None
-        selectedSceneCol = None
+    def findLeftNeighbor(self):
+        if self.selectedSceneCol - 1 >= 0:
+            self.currentSelectedScene = self.scenesMatrix[self.selectedSceneRow][
+                self.selectedSceneCol - 1
+            ]
+            self.selectedSceneRow = self.selectedSceneRow
+            self.selectedSceneCol = self.selectedSceneCol - 1
+        else:
+            self.currentSelectedScene = None
+            self.selectedSceneRow = None
+            self.selectedSceneCol = None
 
-def findLeftNeighbor():
-    global currentSelectedScene
-    global selectedSceneRow
-    global selectedSceneCol
+    def run(self):
+        for event in self.pygame.event.get():
+            if event.type == self.pygame.QUIT:
+                self.pygame.quit()
+                sys.exit()
 
-    if selectedSceneCol - 1 >= 0:
-        currentSelectedScene = scenesMatrix[selectedSceneRow][selectedSceneCol - 1]
-        selectedSceneRow = selectedSceneRow
-        selectedSceneCol = selectedSceneCol - 1
-    else:
-        currentSelectedScene = None
-        selectedSceneRow = None
-        selectedSceneCol = None
+            if event.type == self.pygame.KEYDOWN:
+                if event.key == self.pygame.K_UP:
+                    self.findUpperNeighbor()
+                elif event.key == self.pygame.K_DOWN:
+                    self.findBelowNeighbor()
+                elif event.key == self.pygame.K_RIGHT:
+                    self.findRightNeighbor()
+                elif event.key == self.pygame.K_LEFT:
+                    self.findLeftNeighbor()
+                elif event.key == self.pygame.K_RETURN:
+                    return True
 
-# Variáveis de controle do piscar
-visible = True
-blink_interval = 500  # Intervalo de piscar em milissegundos
-last_blink_time = pygame.time.get_ticks()
+        current_time = self.pygame.time.get_ticks()
 
+        # Verifica se é hora de piscar novamente
+        if current_time - self.last_blink_time >= self.blink_interval:
+            # Inverte a visibilidade
+            self.visible = not self.visible
+            # Atualiza o tempo do último piscar
+            self.last_blink_time = current_time
 
-# Loop principal
-running = True
-while running:
-    # Limpa a tela
-    screen.fill((0, 0, 0))
-
-    # Desenha o Menu de seleção de estágio
-    screen.blit(stageSelectMenu, (0, 0))
-
-    for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                findUpperNeighbor()
-            elif event.key == pygame.K_DOWN:
-                findBelowNeighbor()
-            elif event.key == pygame.K_RIGHT:
-                findRightNeighbor()
-            elif event.key == pygame.K_LEFT:
-                findLeftNeighbor()
-
-        if event.type == pygame.QUIT:
-            running = False
-
-    current_time = pygame.time.get_ticks()
-
-    # Verifica se é hora de piscar novamente
-    if current_time - last_blink_time >= blink_interval:
-        visible = not visible  # Inverte a visibilidade
-        last_blink_time = current_time  # Atualiza o tempo do último piscar
-
-    if visible:
-        pygame.draw.rect(screen, (255, 0, 0), currentSelectedScene, width=5)
-
-    pygame.display.flip()  # Atualiza a tela
-    pygame.time.Clock().tick(60)  # Limita a taxa de quadros
-
-pygame.quit()
-sys.exit()
+        if self.visible:
+            self.pygame.draw.rect(
+                self.screen, (255, 0, 0), self.currentSelectedScene, width=5
+            )
