@@ -3,131 +3,120 @@ import sys
 
 class StageSelector:
     def __init__(self, pygame):
-        self.pygame = pygame
+        self._pygame = pygame
 
-        # Configurações da tela
-        self.screen_width = 800
-        self.screen_height = 600
-        self.screen = self.pygame.display.set_mode(
-            (self.screen_width, self.screen_height)
+        self._screen_width = 800
+        self._screen_height = 600
+        self._screen = self._pygame.display.set_mode(
+            (self._screen_width, self._screen_height)
         )
-        self.pygame.display.set_caption("Stage Selector")
+        self._pygame.display.set_caption("Stage Selector")
 
-        # Carregando a imagem do menu de seleção de estágio
-        self.stageSelectMenu = pygame.image.load(
+        self._stage_select_menu = pygame.image.load(
             "./assets/sprites/stageSelect/StageSelectMenu.png"
         )
 
-        # Redimensiona a imagem de menu de seleção de estágio
-        self.stageSelectMenu = self.pygame.transform.scale(
-            self.stageSelectMenu, (self.screen_width, self.screen_height)
+        self._stage_select_menu = self._pygame.transform.scale(
+            self._stage_select_menu, (self._screen_width, self._screen_height)
         )
 
-        # Dicionário de cenas e coordenadas para desenho da borda de cada cena
-        self.scenes = {
-            "bubbleMan": self.pygame.Rect(120, 60, 150, 110),
-            "airMan": self.pygame.Rect(325, 60, 150, 110),
-            "quickMan": self.pygame.Rect(525, 60, 150, 110),
-            "heatMan": self.pygame.Rect(120, 210, 150, 110),
-            "drWilly": self.pygame.Rect(325, 210, 150, 110),
-            "woodMan": self.pygame.Rect(525, 210, 150, 110),
-            "metalMan": self.pygame.Rect(120, 360, 150, 110),
-            "flashMan": self.pygame.Rect(325, 360, 150, 110),
-            "crashMan": self.pygame.Rect(530, 360, 150, 110),
+        self._scene_border_coordinates = {
+            "bubbleMan": self._pygame.Rect(120, 60, 150, 110),
+            "airMan": self._pygame.Rect(325, 60, 150, 110),
+            "quickMan": self._pygame.Rect(525, 60, 150, 110),
+            "heatMan": self._pygame.Rect(120, 210, 150, 110),
+            "drWilly": self._pygame.Rect(325, 210, 150, 110),
+            "woodMan": self._pygame.Rect(525, 210, 150, 110),
+            "metalMan": self._pygame.Rect(120, 360, 150, 110),
+            "flashMan": self._pygame.Rect(325, 360, 150, 110),
+            "crashMan": self._pygame.Rect(530, 360, 150, 110),
         }
 
-        # Lógicas relacionadas à seleção de cena...
+        self._selected_scene = self._scene_border_coordinates["drWilly"]
+        self._selected_scene_row = 1
+        self._selected_scene_col = 1
 
-        # Cena atual
-        self.currentSelectedScene = self.scenes["drWilly"]
-        self.selectedSceneRow = 1
-        self.selectedSceneCol = 1
-
-        # Matriz de cenas mapeando e descrevendo corretamente o menu de seleção de cena
         # fmt: off
-        self.scenesMatrix = [[self.scenes["bubbleMan"], self.scenes["airMan"], self.scenes["quickMan"],],
-                            [self.scenes["heatMan"], self.scenes["drWilly"], self.scenes["woodMan"],],
-                            [self.scenes["metalMan"], self.scenes["flashMan"], self.scenes["crashMan"],]]
+        self._scene_border_coordinates_matrix = [[self._scene_border_coordinates["bubbleMan"], self._scene_border_coordinates["airMan"], self._scene_border_coordinates["quickMan"],],
+                                                 [self._scene_border_coordinates["heatMan"], self._scene_border_coordinates["drWilly"], self._scene_border_coordinates["woodMan"],],
+                                                 [self._scene_border_coordinates["metalMan"], self._scene_border_coordinates["flashMan"], self._scene_border_coordinates["crashMan"],]]
 
-        # Variáveis de controle do piscar da borda de seleção de cena
-        self.visible = True
-        # Intervalo de piscar em milissegundos
-        self.blink_interval = 500
-        self.last_blink_time = self.pygame.time.get_ticks()
+        self._is_selected_scene_border_visible = True
+        self._scene_border_blink_interval = 500
+        self._scene_border_last_blink_time = self._pygame.time.get_ticks()
 
-    # Metodos relacionadas ao calculo da matriz de cenas...
-    def findUpperNeighbor(self):
-        if self.selectedSceneRow - 1 >= 0:
-            self.currentSelectedScene = self.scenesMatrix[self.selectedSceneRow - 1][
-                self.selectedSceneCol
-            ]
-            self.selectedSceneRow = self.selectedSceneRow - 1
-            self.selectedSceneCol = self.selectedSceneCol
+    def _find_upper_matrix_neighbor(self):
+        if self._selected_scene_row - 1 >= 0:
+            # fmt: off
+            self._selected_scene = self._scene_border_coordinates_matrix[self._selected_scene_row - 1][self._selected_scene_col]
+            self._selected_scene_row = self._selected_scene_row - 1
+            self._selected_scene_col = self._selected_scene_col
 
-    def findBelowNeighbor(self):
-        if self.selectedSceneRow + 1 < len(self.scenesMatrix):
-            self.currentSelectedScene = self.scenesMatrix[self.selectedSceneRow + 1][
-                self.selectedSceneCol
-            ]
-            self.selectedSceneRow = self.selectedSceneRow + 1
-            self.selectedSceneCol = self.selectedSceneCol
+    def _find_below_matrix_neighbor(self):
+        if self._selected_scene_row + 1 < len(self._scene_border_coordinates_matrix):
+            # fmt: off
+            self._selected_scene = self._scene_border_coordinates_matrix[self._selected_scene_row + 1][self._selected_scene_col]
+            self._selected_scene_row = self._selected_scene_row + 1
+            self._selected_scene_col = self._selected_scene_col
 
-    def findRightNeighbor(self):
-        if self.selectedSceneCol + 1 < len(self.scenesMatrix[self.selectedSceneRow]):
-            self.currentSelectedScene = self.scenesMatrix[self.selectedSceneRow][
-                self.selectedSceneCol + 1
-            ]
-            self.selectedSceneRow = self.selectedSceneRow
-            self.selectedSceneCol = self.selectedSceneCol + 1
+    def _find_right_matrix_neighbor(self):
+        # fmt: off
+        if self._selected_scene_col + 1 < len(self._scene_border_coordinates_matrix[self._selected_scene_row]):
+            # fmt: off
+            self._selected_scene = self._scene_border_coordinates_matrix[self._selected_scene_row][self._selected_scene_col + 1]
+            self._selected_scene_row = self._selected_scene_row
+            self._selected_scene_col = self._selected_scene_col + 1
 
-    def findLeftNeighbor(self):
-        if self.selectedSceneCol - 1 >= 0:
-            self.currentSelectedScene = self.scenesMatrix[self.selectedSceneRow][
-                self.selectedSceneCol - 1
-            ]
-            self.selectedSceneRow = self.selectedSceneRow
-            self.selectedSceneCol = self.selectedSceneCol - 1
+    def _find_left_matrix_neighbor(self):
+        if self._selected_scene_col - 1 >= 0:
+            # fmt: off
+            self._selected_scene = self._scene_border_coordinates_matrix[self._selected_scene_row][self._selected_scene_col - 1]
+            self._selected_scene_row = self._selected_scene_row
+            self._selected_scene_col = self._selected_scene_col - 1
 
-    def drawStageSelectMenu(self):
-        self.screen.blit(self.stageSelectMenu, (0, 0))
+    def _draw_stage_select_menu(self):
+        self._screen.blit(self._stage_select_menu, (0, 0))
 
-    def blinkSelectedSceneBorder(self):
-        current_time = self.pygame.time.get_ticks()
+    def _blink_selected_scene_border(self):
+        current_time = self._pygame.time.get_ticks()
 
-        # Verifica se é hora de piscar novamente
-        if current_time - self.last_blink_time >= self.blink_interval:
-            # Inverte a visibilidade
-            self.visible = not self.visible
-            # Atualiza o tempo do último piscar
-            self.last_blink_time = current_time
+        # Check if its time to blink again
+        # fmt: off
+        if (current_time - self._scene_border_last_blink_time >= self._scene_border_blink_interval):
+            # inverts visibility
+            self._is_selected_scene_border_visible = (
+                not self._is_selected_scene_border_visible
+            )
+            # Update the last blink time
+            self._scene_border_last_blink_time = current_time
 
-        if self.visible:
-            self.pygame.draw.rect(
-                self.screen, (255, 0, 0), self.currentSelectedScene, width=5
+        if self._is_selected_scene_border_visible:
+            self._pygame.draw.rect(
+                self._screen, (255, 0, 0), self._selected_scene, width=5
             )
 
-    def runEvents(self):
-        self.drawStageSelectMenu()
+    def run_events(self):
+        self._draw_stage_select_menu()
 
-        for event in self.pygame.event.get():
-            if event.type == self.pygame.QUIT:
-                self.pygame.quit()
+        for event in self._pygame.event.get():
+            if event.type == self._pygame.QUIT:
+                self._pygame.quit()
                 sys.exit()
 
-            if event.type == self.pygame.KEYDOWN:
-                if event.key == self.pygame.K_UP:
-                    self.findUpperNeighbor()
-                elif event.key == self.pygame.K_DOWN:
-                    self.findBelowNeighbor()
-                elif event.key == self.pygame.K_RIGHT:
-                    self.findRightNeighbor()
-                elif event.key == self.pygame.K_LEFT:
-                    self.findLeftNeighbor()
-                elif event.key == self.pygame.K_RETURN:
+            if event.type == self._pygame.KEYDOWN:
+                if event.key == self._pygame.K_UP:
+                    self._find_upper_matrix_neighbor()
+                elif event.key == self._pygame.K_DOWN:
+                    self._find_below_matrix_neighbor()
+                elif event.key == self._pygame.K_RIGHT:
+                    self._find_right_matrix_neighbor()
+                elif event.key == self._pygame.K_LEFT:
+                    self._find_left_matrix_neighbor()
+                elif event.key == self._pygame.K_RETURN:
                     return True
 
-        self.blinkSelectedSceneBorder()
+        self._blink_selected_scene_border()
 
-        self.pygame.display.flip()
+        self._pygame.display.flip()
 
-        self.pygame.time.Clock().tick(60)
+        self._pygame.time.Clock().tick(60)
