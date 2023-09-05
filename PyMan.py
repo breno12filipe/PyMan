@@ -1,5 +1,5 @@
 import pygame
-from scenes.menu import Menu, gameDifficultyLevels
+from scenes.menu import Menu, GameDifficultyLevels
 from scenes.stageSelector import StageSelector
 
 pygame.init()
@@ -18,7 +18,7 @@ def showMainMenu():
     if mainMenuIsShown == False:
         mainMenuIsShown = True
     else:
-        return mainMenu.runEvents()
+        return mainMenu.run_events()
 
 
 def setGameDifficulty():

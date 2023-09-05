@@ -4,105 +4,95 @@ from pygame import mixer
 from enum import Enum
 
 
-class gameDifficultyLevels(Enum):
+class GameDifficultyLevels(Enum):
     normal = 1
     hard = 2
 
 
 class Menu:
     def __init__(self, pygame):
-        self.pygame = pygame
+        self._pygame = pygame
 
-        # Configurações de tela
-        self.screen_width = 800
-        self.screen_height = 600
-        self.screenSize = (self.screen_width, self.screen_height)
-        self.screen = self.pygame.display.set_mode(
-            (self.screen_width, self.screen_height)
+        self._screen_width = 800
+        self._screen_height = 600
+        self._screen_size = (self._screen_width, self._screen_height)
+        self._screen = self._pygame.display.set_mode(
+            (self._screen_width, self._screen_height)
         )
 
-        # Setting window Title
-        self.pygame.display.set_caption("Megaman II")
-
-        self.icon_path = self.pygame.image.load(
+        self._icon_path = self._pygame.image.load(
             "./assets/sprites/megaman/megaman_jumping.png"
         )
 
-        # Setting background image
-        self.bg_img = self.pygame.image.load("./assets/background_menu.png")
-        self.bg_img = self.pygame.transform.scale(self.bg_img, self.screenSize)
-
-        # Setting window icon
-        self.pygame.display.set_icon(self.icon_path)
-
-        # Setting menu song
-        self.pygame.mixer.init()
-        self.pygame.mixer.music.load(
-            "./assets/sounds/Mega_Man_2_IntroTheme_Metal_Guitar_Cover_FamilyJules.mp3"
+        self._background_image = self._pygame.image.load("./assets/background_menu.png")
+        self._background_image = self._pygame.transform.scale(
+            self._background_image, self._screen_size
         )
-        self.pygame.mixer.music.set_volume(0.5)
-        self.pygame.mixer.music.play(-1)
 
-        # Setting buttons images variables
-        self.difficult_btn = self.pygame.image.load("./assets/buttons/difficult.png")
-        self.normal_btn = self.pygame.image.load("./assets/buttons/normal.png")
-        self.arrow_btn = self.pygame.image.load("./assets/buttons/arrow.png")
-
-        # Other variables
-        self.transparent = (0, 0, 0, 0)
-        self.cursor_move_sound = self.pygame.mixer.Sound(
+        self._difficult_button = self._pygame.image.load(
+            "./assets/buttons/difficult.png"
+        )
+        self._normal_button = self._pygame.image.load("./assets/buttons/normal.png")
+        self._arrow_button = self._pygame.image.load("./assets/buttons/arrow.png")
+        self._cursor_move_sound = self._pygame.mixer.Sound(
             "./assets/sounds/cursor_move.wav"
         )
+        self._game_difficulty = GameDifficultyLevels.normal
 
-        # Render game objects
-        self.screen.blit(self.bg_img, (0, 0))
-        self.screen.blit(self.normal_btn, (400, 475))
-        self.screen.blit(self.arrow_btn, (375, 470))
-        self.screen.blit(self.difficult_btn, (400, 500))
+        # Setting pygame configurations and rendering images
+        self._pygame.display.set_caption("Megaman II")
+        self._pygame.display.set_icon(self._icon_path)
 
-        self.gameDifficulty = gameDifficultyLevels.normal
+        self._pygame.mixer.init()
+        self._pygame.mixer.music.load(
+            "./assets/sounds/Mega_Man_2_IntroTheme_Metal_Guitar_Cover_FamilyJules.mp3"
+        )
+        self._pygame.mixer.music.set_volume(0.5)
+        self._pygame.mixer.music.play(-1)
 
-    def setGameDifficulty(self, gameDifficulty):
-        if self.gameDifficulty != gameDifficulty:
-            self.pygame.mixer.Sound.play(self.cursor_move_sound)
-            self.gameDifficulty = gameDifficulty
+        self._screen.blit(self._background_image, (0, 0))
+        self._screen.blit(self._normal_button, (400, 475))
+        self._screen.blit(self._arrow_button, (375, 470))
+        self._screen.blit(self._difficult_button, (400, 500))
 
-    def getGameDifficulty(self):
-        return self.gameDifficulty
+    def _set_game_difficult(self, game_difficulty):
+        if self._game_difficulty != game_difficulty:
+            self._pygame.mixer.Sound.play(self._cursor_move_sound)
+            self._game_difficulty = game_difficulty
 
-    def drawBackgroundImage(self):
-        self.screen.blit(self.bg_img, (0, 0))
+    def _draw_background_image(self):
+        self._screen.blit(self._background_image, (0, 0))
 
-    def drawNormalDifficultyButtons(self):
-        self.screen.blit(self.normal_btn, (400, 475))
+    def _draw_normal_difficult_button(self):
+        self._screen.blit(self._normal_button, (400, 475))
 
-    def drawMenuArrowButtonAccordingToDifficulty(self):
-        if self.gameDifficulty == gameDifficultyLevels.normal:
-            self.screen.blit(self.arrow_btn, (375, 470))
+    def _draw_menu_arrow_button_according_to_difficulty(self):
+        if self._game_difficulty == GameDifficultyLevels.normal:
+            self._screen.blit(self._arrow_button, (375, 470))
         else:
-            self.screen.blit(self.arrow_btn, (375, 500))
+            self._screen.blit(self._arrow_button, (375, 500))
 
-    def drawDifficultButton(self):
-        self.screen.blit(self.difficult_btn, (400, 500))
+    def _draw_difficult_difficult_button(self):
+        self._screen.blit(self._difficult_button, (400, 500))
 
-    def runEvents(self):
-        self.drawBackgroundImage()
-        self.drawNormalDifficultyButtons()
-        self.drawMenuArrowButtonAccordingToDifficulty()
-        self.drawDifficultButton()
+    def run_events(self):
+        self._draw_background_image()
+        self._draw_normal_difficult_button()
+        self._draw_menu_arrow_button_according_to_difficulty()
+        self._draw_difficult_difficult_button()
 
-        for event in self.pygame.event.get():
-            if event.type == self.pygame.QUIT:
-                self.pygame.quit()
+        for event in self._pygame.event.get():
+            if event.type == self._pygame.QUIT:
+                self._pygame.quit()
                 sys.exit()
 
-            if event.type == self.pygame.KEYDOWN:
-                if event.key == self.pygame.K_DOWN:
-                    self.setGameDifficulty(gameDifficultyLevels.hard)
+            if event.type == self._pygame.KEYDOWN:
+                if event.key == self._pygame.K_DOWN:
+                    self._set_game_difficult(GameDifficultyLevels.hard)
 
-                elif event.key == self.pygame.K_UP:
-                    self.setGameDifficulty(gameDifficultyLevels.normal)
+                elif event.key == self._pygame.K_UP:
+                    self._set_game_difficult(GameDifficultyLevels.normal)
 
-            if event.type == self.pygame.KEYUP:
-                if event.key == self.pygame.K_RETURN:
+            if event.type == self._pygame.KEYUP:
+                if event.key == self._pygame.K_RETURN:
                     return True
