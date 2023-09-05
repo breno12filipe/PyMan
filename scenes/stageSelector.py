@@ -125,6 +125,7 @@ class StageSelector:
                     self.findLeftNeighbor()
                 elif event.key == self.pygame.K_RETURN:
                     return True
+
         self.blinkSelectedSceneBorder()
 
         self.pygame.display.flip()

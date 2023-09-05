@@ -70,14 +70,26 @@ class Menu:
     def getGameDifficulty(self):
         return self.gameDifficulty
 
-    def run(self):
+    def drawBackgroundImage(self):
         self.screen.blit(self.bg_img, (0, 0))
+
+    def drawNormalDifficultyButtons(self):
         self.screen.blit(self.normal_btn, (400, 475))
+
+    def drawMenuArrowButtonAccordingToDifficulty(self):
         if self.gameDifficulty == gameDifficultyLevels.normal:
             self.screen.blit(self.arrow_btn, (375, 470))
         else:
             self.screen.blit(self.arrow_btn, (375, 500))
+
+    def drawDifficultButton(self):
         self.screen.blit(self.difficult_btn, (400, 500))
+
+    def runEvents(self):
+        self.drawBackgroundImage()
+        self.drawNormalDifficultyButtons()
+        self.drawMenuArrowButtonAccordingToDifficulty()
+        self.drawDifficultButton()
 
         for event in self.pygame.event.get():
             if event.type == self.pygame.QUIT:
