@@ -7,12 +7,14 @@ pygame.init()
 mainMenuIsShown = False
 gameDifficulty = None
 clock = pygame.time.Clock()
-mainMenu = Menu(pygame)
+# mainMenu = Menu(pygame)
+stageSelector = StageSelector(pygame)
 
 
 def showMainMenu():
     global mainMenuIsShown
     global mainMenu
+
     if mainMenuIsShown == False:
         mainMenuIsShown = True
     else:
@@ -26,7 +28,9 @@ def setGameDifficulty():
 
 
 def showSceneSelectorMenu():
-    ...
+    global stageSelector
+
+    stageSelector.runEvents()
 
 
 def playSelectedScene():
@@ -34,10 +38,11 @@ def playSelectedScene():
 
 
 while True:
-    showMainMenu()
-    setGameDifficulty()
     showSceneSelectorMenu()
-    playSelectedScene()
+    # if showMainMenu():
+    # setGameDifficulty()
+    # showSceneSelectorMenu()
+    # playSelectedScene()
 
     pygame.display.update()
 

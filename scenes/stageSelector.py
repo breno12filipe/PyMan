@@ -55,9 +55,6 @@ class StageSelector:
         self.blink_interval = 500
         self.last_blink_time = self.pygame.time.get_ticks()
 
-        # Desenha o Menu de seleção de estágio
-        self.screen.blit(self.stageSelectMenu, (0, 0))
-
     # Metodos relacionadas ao calculo da matriz de cenas...
     def findUpperNeighbor(self):
         if self.selectedSceneRow - 1 >= 0:
@@ -66,10 +63,6 @@ class StageSelector:
             ]
             self.selectedSceneRow = self.selectedSceneRow - 1
             self.selectedSceneCol = self.selectedSceneCol
-        else:
-            self.currentSelectedScene = None
-            self.selectedSceneRow = None
-            self.selectedSceneCol = None
 
     def findBelowNeighbor(self):
         if self.selectedSceneRow + 1 < len(self.scenesMatrix):
@@ -78,10 +71,6 @@ class StageSelector:
             ]
             self.selectedSceneRow = self.selectedSceneRow + 1
             self.selectedSceneCol = self.selectedSceneCol
-        else:
-            self.currentSelectedScene = None
-            self.selectedSceneRow = None
-            self.selectedSceneCol = None
 
     def findRightNeighbor(self):
         if self.selectedSceneCol + 1 < len(self.scenesMatrix[self.selectedSceneRow]):
@@ -90,10 +79,6 @@ class StageSelector:
             ]
             self.selectedSceneRow = self.selectedSceneRow
             self.selectedSceneCol = self.selectedSceneCol + 1
-        else:
-            self.currentSelectedScene = None
-            self.selectedSceneRow = None
-            self.selectedSceneCol = None
 
     def findLeftNeighbor(self):
         if self.selectedSceneCol - 1 >= 0:
@@ -102,12 +87,28 @@ class StageSelector:
             ]
             self.selectedSceneRow = self.selectedSceneRow
             self.selectedSceneCol = self.selectedSceneCol - 1
-        else:
-            self.currentSelectedScene = None
-            self.selectedSceneRow = None
-            self.selectedSceneCol = None
 
-    def run(self):
+    def drawStageSelectMenu(self):
+        self.screen.blit(self.stageSelectMenu, (0, 0))
+
+    def blinkSelectedSceneBorder(self):
+        current_time = self.pygame.time.get_ticks()
+
+        # Verifica se é hora de piscar novamente
+        if current_time - self.last_blink_time >= self.blink_interval:
+            # Inverte a visibilidade
+            self.visible = not self.visible
+            # Atualiza o tempo do último piscar
+            self.last_blink_time = current_time
+
+        if self.visible:
+            self.pygame.draw.rect(
+                self.screen, (255, 0, 0), self.currentSelectedScene, width=5
+            )
+
+    def runEvents(self):
+        self.drawStageSelectMenu()
+
         for event in self.pygame.event.get():
             if event.type == self.pygame.QUIT:
                 self.pygame.quit()
@@ -124,17 +125,8 @@ class StageSelector:
                     self.findLeftNeighbor()
                 elif event.key == self.pygame.K_RETURN:
                     return True
+        self.blinkSelectedSceneBorder()
 
-        current_time = self.pygame.time.get_ticks()
+        self.pygame.display.flip()
 
-        # Verifica se é hora de piscar novamente
-        if current_time - self.last_blink_time >= self.blink_interval:
-            # Inverte a visibilidade
-            self.visible = not self.visible
-            # Atualiza o tempo do último piscar
-            self.last_blink_time = current_time
-
-        if self.visible:
-            self.pygame.draw.rect(
-                self.screen, (255, 0, 0), self.currentSelectedScene, width=5
-            )
+        self.pygame.time.Clock().tick(60)
