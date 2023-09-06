@@ -55,6 +55,9 @@ class Menu:
         self._screen.blit(self._arrow_button, (375, 470))
         self._screen.blit(self._difficult_button, (400, 500))
 
+    def __del__(self):
+        self._pygame.mixer.quit()
+
     def _set_game_difficult(self, game_difficulty):
         if self._game_difficulty != game_difficulty:
             self._pygame.mixer.Sound.play(self._cursor_move_sound)

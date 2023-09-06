@@ -4,46 +4,20 @@ from scenes.stageSelector import StageSelector
 
 pygame.init()
 
-mainMenuIsShown = False
-gameDifficulty = None
+is_main_menu_shown = True
+game_difficulty = None
 clock = pygame.time.Clock()
-# mainMenu = Menu(pygame)
-stageSelector = StageSelector(pygame)
-
-
-def showMainMenu():
-    global mainMenuIsShown
-    global mainMenu
-
-    if mainMenuIsShown == False:
-        mainMenuIsShown = True
-    else:
-        return mainMenu.run_events()
-
-
-def setGameDifficulty():
-    global mainMenu
-    global gameDifficulty
-    gameDifficulty = mainMenu.getGameDifficulty()
-
-
-def showSceneSelectorMenu():
-    global stageSelector
-
-    stageSelector.run_events()
-
-
-def playSelectedScene():
-    ...
-
+main_menu = Menu(pygame)
+stage_selector = StageSelector(pygame)
 
 while True:
-    showSceneSelectorMenu()
-    # showMainMenu()
-    # if showMainMenu():
-    # setGameDifficulty()
-    # showSceneSelectorMenu()
-    # playSelectedScene()
+    if is_main_menu_shown is not False:
+        if main_menu.run_events():
+            is_main_menu_shown = False
+            del main_menu
+
+    if is_main_menu_shown is False:
+        stage_selector.run_events()
 
     pygame.display.update()
 
