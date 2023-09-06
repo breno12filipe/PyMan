@@ -1,4 +1,17 @@
 import sys
+from enum import Enum
+
+
+class GameScenes(Enum):
+    bubbleMan = 1
+    airMan = 2
+    quickMan = 3
+    heatMan = 4
+    drWilly = 5
+    woodMan = 6
+    metalMan = 7
+    flashMan = 8
+    crashMan = 9
 
 
 class StageSelector:
@@ -21,15 +34,15 @@ class StageSelector:
         )
 
         self._scene_border_coordinates = {
-            "bubbleMan": self._pygame.Rect(120, 60, 150, 110),
-            "airMan": self._pygame.Rect(325, 60, 150, 110),
-            "quickMan": self._pygame.Rect(525, 60, 150, 110),
-            "heatMan": self._pygame.Rect(120, 210, 150, 110),
-            "drWilly": self._pygame.Rect(325, 210, 150, 110),
-            "woodMan": self._pygame.Rect(525, 210, 150, 110),
-            "metalMan": self._pygame.Rect(120, 360, 150, 110),
-            "flashMan": self._pygame.Rect(325, 360, 150, 110),
-            "crashMan": self._pygame.Rect(530, 360, 150, 110),
+            "bubbleMan": (self._pygame.Rect(120, 60, 150, 110), GameScenes.bubbleMan),
+            "airMan": (self._pygame.Rect(325, 60, 150, 110), GameScenes.airMan),
+            "quickMan": (self._pygame.Rect(525, 60, 150, 110), GameScenes.quickMan),
+            "heatMan": (self._pygame.Rect(120, 210, 150, 110), GameScenes.heatMan),
+            "drWilly": (self._pygame.Rect(325, 210, 150, 110), GameScenes.drWilly),
+            "woodMan": (self._pygame.Rect(525, 210, 150, 110), GameScenes.woodMan),
+            "metalMan": (self._pygame.Rect(120, 360, 150, 110), GameScenes.metalMan),
+            "flashMan": (self._pygame.Rect(325, 360, 150, 110), GameScenes.flashMan),
+            "crashMan": (self._pygame.Rect(530, 360, 150, 110), GameScenes.crashMan),
         }
 
         self._selected_scene = self._scene_border_coordinates["drWilly"]
@@ -92,8 +105,11 @@ class StageSelector:
 
         if self._is_selected_scene_border_visible:
             self._pygame.draw.rect(
-                self._screen, (255, 0, 0), self._selected_scene, width=5
+                self._screen, (255, 0, 0), self._selected_scene[0], width=5
             )
+
+    def get_selected_game_scene(self):
+        return self._selected_scene[1]
 
     def run_events(self):
         self._draw_stage_select_menu()
