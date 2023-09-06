@@ -58,7 +58,7 @@ class Menu:
     def __del__(self):
         self._pygame.mixer.quit()
 
-    def _set_game_difficult(self, game_difficulty):
+    def _set_game_difficulty(self, game_difficulty):
         if self._game_difficulty != game_difficulty:
             self._pygame.mixer.Sound.play(self._cursor_move_sound)
             self._game_difficulty = game_difficulty
@@ -78,6 +78,9 @@ class Menu:
     def _draw_difficult_difficult_button(self):
         self._screen.blit(self._difficult_button, (400, 500))
 
+    def get_game_difficulty(self):
+        return self._game_difficulty
+
     def run_events(self):
         self._draw_background_image()
         self._draw_normal_difficult_button()
@@ -91,11 +94,11 @@ class Menu:
 
             if event.type == self._pygame.KEYDOWN:
                 if event.key == self._pygame.K_DOWN:
-                    self._set_game_difficult(GameDifficultyLevels.hard)
+                    self._set_game_difficulty(GameDifficultyLevels.hard)
 
                 elif event.key == self._pygame.K_UP:
-                    self._set_game_difficult(GameDifficultyLevels.normal)
+                    self._set_game_difficulty(GameDifficultyLevels.normal)
 
             if event.type == self._pygame.KEYUP:
                 if event.key == self._pygame.K_RETURN:
-                    return True
+                    return self._game_difficulty
