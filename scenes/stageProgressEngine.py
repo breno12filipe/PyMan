@@ -1,15 +1,17 @@
 class StageProgressEngine:
     def __init__(self, game_stage_progress):
         self._game_stage_progress = game_stage_progress
+        self._game_stage_progress_list = list(self._game_stage_progress)
 
     def _get_next_value(self, current_key):
-        temp = list(self._game_stage_progress)
         try:
-            res = temp[temp.index(current_key) + 1]
+            next_value = self._game_stage_progress_list[
+                self._game_stage_progress_list.index(current_key) + 1
+            ]
         except (ValueError, IndexError):
-            res = None
+            next_value = None
 
-        return res
+        return next_value
 
     def flip_game_stage_progress(self):
         for game_stage in self._game_stage_progress:
