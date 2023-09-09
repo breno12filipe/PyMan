@@ -53,7 +53,7 @@ def play_main_menu():
     if main_menu.run_events():
         game_difficulty = main_menu.get_game_difficulty()
         del main_menu
-        stage_progress_handler.flip_game_stage_progress()
+        stage_progress_handler.flip_game_stage_progress_forward()
 
 
 def play_stage_selector():
@@ -86,7 +86,6 @@ while True:
     if selected_scene is None:
         stage_progress_handler.play_current_scene()
     else:
-        print(game_stage_progress)
         play_selected_scene()
     pygame.display.update()
     clock.tick(60)
