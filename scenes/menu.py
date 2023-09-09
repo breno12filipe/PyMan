@@ -99,6 +99,5 @@ class Menu:
                 elif event.key == self._pygame.K_UP:
                     self._set_game_difficulty(GameDifficultyLevels.normal)
 
-            if event.type == self._pygame.KEYUP:
                 if event.key == self._pygame.K_RETURN:
-                    return self._game_difficulty
+                    return True

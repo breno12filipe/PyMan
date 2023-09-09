@@ -1,66 +1,55 @@
-import pygame, sys, importlib
-from pygame.locals import *
+import sys
 
 from gameObjects.player import Player
 from gameObjects.ground import Ground
 from gameObjects.background import Background
 
-pygame.init()  # Begin pygame
 
-# Declaring variables to be used through the program
-HEIGHT = 350
-WIDTH = 700
-FPS = 60
-FPS_CLOCK = pygame.time.Clock()
-COUNT = 0
+class AirMan:
+    def __init__(self, pygame):
+        self._pygame = pygame
 
-# Create the display, meant to be global variable
-displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Game")
+        self._screen_width = 800
+        self._screen_height = 600
+        self._screen = self._pygame.display.set_mode(
+            (self._screen_width, self._screen_height)
+        )
+        self._pygame.display.set_caption("Air Man")
 
-background = Background("assets/backgrounds/Background.png", displaysurface)
+        self._background = Background("assets/backgrounds/Background.png", self._screen)
+        self._ground = Ground("assets/backgrounds/Ground.png", self._screen)
+        self._ground_group = self._pygame.sprite.Group()
+        self._ground_group.add(self._ground)
 
-ground = Ground("assets/backgrounds/Ground.png", displaysurface)
-ground_group = pygame.sprite.Group()
-ground_group.add(ground)
+        self._player = Player(self._screen_width, self._ground_group)
+        self._player_group = self._pygame.sprite.Group()
 
-player = Player(WIDTH, ground_group)
-Playergroup = pygame.sprite.Group()
+    def run_events(self):
+        self._player.gravity_check()
 
+        for event in self._pygame.event.get():
+            if event.type == self._pygame.QUIT:
+                self._pygame.quit()
+                sys.exit()
 
-# Game loop
-while True:
-    player.gravity_check()
+            if event.type == self._pygame.MOUSEBUTTONDOWN:
+                pass
 
-    for event in pygame.event.get():
-        # Will run when the close window button is clicked
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
+            if event.type == self._pygame.KEYDOWN:
+                if event.key == self._pygame.K_SPACE:
+                    self._player.jump()
+            if event.type == self._pygame.KEYUP:
+                if event.key == self._pygame.K_LEFT or self._pygame.K_RIGHT:
+                    self._player.image = self._pygame.image.load(
+                        "assets/sprites/megaman/megaman_stand1.png"
+                    )
 
-        # For events that occur upon clicking the mouse (left click)
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            pass
+        self._player.update()
+        self._player.move()
 
-        # Event handling for a range of different key presses
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                player.jump()
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or pygame.K_RIGHT:
-                player.image = pygame.image.load(
-                    "assets/sprites/megaman/megaman_stand1.png"
-                )
-    # Player related functions
-    player.update()
-    player.move()
+        self._background.render()
+        self._ground.render()
 
-    # Display and Background related functions
-    background.render()
-    ground.render()
+        self._screen.blit(self._player.image, self._player.rect)
 
-    # Rendering Player
-    displaysurface.blit(player.image, player.rect)
-
-    pygame.display.update()
-    FPS_CLOCK.tick(FPS)
+        self._pygame.display.update()

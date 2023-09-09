@@ -21,6 +21,7 @@ class StageProgressEngine:
                     self._game_stage_progress[game_stage][0] = False
                     # fmt: off
                     self._game_stage_progress[self._get_next_value(game_stage)][0] = True
+                    break
 
     def play_current_scene(self):
         for game_stage in self._game_stage_progress:
