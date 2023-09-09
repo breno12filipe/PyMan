@@ -129,7 +129,6 @@ class StageSelector:
                 elif event.key == self._pygame.K_LEFT:
                     self._find_left_matrix_neighbor()
                 elif event.key == self._pygame.K_RETURN:
-                    print("APERTOU ENTER")
                     return True
 
         self._blink_selected_scene_border()
