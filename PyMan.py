@@ -1,6 +1,8 @@
 import pygame, sys
-from scenes.menu import Menu, GameDifficultyLevels
-from scenes.stageSelector import StageSelector, GameScenes
+from scenes.menu import Menu
+from scenes.gameDifficultyLevels import GameDifficultyLevels
+from scenes.stageSelector import StageSelector
+from scenes.gameScenes import GameScenes
 from scenes.stageProgressHandler import StageProgressHandler
 from scenes.airMan import AirMan
 

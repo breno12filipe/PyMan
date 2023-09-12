@@ -1,12 +1,5 @@
 import sys
-from pygame.locals import *
-from pygame import mixer
-from enum import Enum
-
-
-class GameDifficultyLevels(Enum):
-    normal = 1
-    hard = 2
+from scenes.gameDifficultyLevels import GameDifficultyLevels
 
 
 class Menu:

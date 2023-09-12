@@ -1,17 +1,5 @@
 import sys
-from enum import Enum
-
-
-class GameScenes(Enum):
-    bubbleMan = 1
-    airMan = 2
-    quickMan = 3
-    heatMan = 4
-    drWilly = 5
-    woodMan = 6
-    metalMan = 7
-    flashMan = 8
-    crashMan = 9
+from .gameScenes import GameScenes
 
 
 class StageSelector:

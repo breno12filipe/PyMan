@@ -1,4 +1,4 @@
-from .stageSelector import GameScenes
+from .gameScenes import GameScenes
 
 
 class StageProgressHandler:
